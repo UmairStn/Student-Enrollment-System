@@ -4,6 +4,12 @@
  */
 package studentmanagement;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author umrstn
@@ -16,6 +22,26 @@ public class Student_Details extends javax.swing.JFrame {
     public Student_Details() {
         initComponents();
     }
+    
+        Connection con;
+        PreparedStatement pat;
+        
+
+        public void Connect() {
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                String url = "jdbc:mysql://localhost:3306/student_enrollment";
+                String username = "root";
+                String password = "Umair.123";
+                con = DriverManager.getConnection(url, username, password);
+                System.out.println("Connected Successfully");
+            } catch (ClassNotFoundException | SQLException ex) {
+                Logger.getLogger(Student_Details.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+
+        
 
     /**
      * This method is called from within the constructor to initialize the form.

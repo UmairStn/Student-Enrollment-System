@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package studentmanagement;
+import java.sql.*;
 
 /**
  *
@@ -13,7 +14,7 @@ public class StudentManagement {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         // TODO code application logic here
         StudentManagement.Home();
     }
@@ -56,6 +57,9 @@ public class StudentManagement {
         addStudentStd.setVisible(true);
     }
     
-    
-    
+    //delete page
+    public static void DeleteDetails(){
+        Delete deleteDetails = new Delete();
+        deleteDetails.setVisible(true);
+    }
 }

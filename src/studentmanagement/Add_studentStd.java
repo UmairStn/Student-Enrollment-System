@@ -3,6 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package studentmanagement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -16,6 +24,7 @@ public class Add_studentStd extends javax.swing.JFrame {
      */
     public Add_studentStd() {
         initComponents();
+        Connect();
     }
     
     //clear
@@ -32,6 +41,41 @@ public class Add_studentStd extends javax.swing.JFrame {
         prntAddrs.setText(null);
         prntNum.setText(null);
         
+    }
+    
+    //
+    
+    Connection con;
+    PreparedStatement pat;
+        
+
+    public void Connect() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String url = "jdbc:mysql://localhost:3306/student_enrollment";
+            String username = "root";
+            String password = "Umair.123";
+            con = DriverManager.getConnection(url, username, password);
+            System.out.println("Connected Successfully");
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Student_Details.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    public void deleteStudentById(int id) {
+    String sql = "DELETE FROM student_details WHERE id = ?";
+    try (PreparedStatement pat = con.prepareStatement(sql)) {
+        pat.setInt(1, id);
+        int rowsDeleted = pat.executeUpdate();
+        if (rowsDeleted > 0) {
+            JOptionPane.showMessageDialog(null, "Student record deleted successfully!");
+        } else {
+            JOptionPane.showMessageDialog(null, "No record found with id: " + id);
+        }
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(null, "Error deleting student record: " + ex.getMessage());
+    }
     }
 
     /**
@@ -74,7 +118,7 @@ public class Add_studentStd extends javax.swing.JFrame {
         clearbtn = new javax.swing.JButton();
         saveBtn1 = new javax.swing.JButton();
         jLabel18 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        courseCmb = new javax.swing.JComboBox<>();
         genderCmb = new javax.swing.JComboBox<>();
         backBtn = new javax.swing.JButton();
         logoutBtn = new javax.swing.JButton();
@@ -174,7 +218,7 @@ public class Add_studentStd extends javax.swing.JFrame {
         jLabel18.setFont(new java.awt.Font("HP Simplified Hans", 0, 18)); // NOI18N
         jLabel18.setText("Course Name");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Diploma in Software Engineering (25.1)", "Diploma in Networking (25.1)", "Diploma in Data Science (24.3)" }));
+        courseCmb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Diploma in Software Engineering (25.1)", "Diploma in Networking (25.1)", "Diploma in Data Science (24.3)" }));
 
         genderCmb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Male", "Female" }));
 
@@ -232,7 +276,7 @@ public class Add_studentStd extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(stdNum)
                                     .addComponent(stdDob)
-                                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(courseCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(genderCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,10 +284,6 @@ public class Add_studentStd extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(49, 49, 49)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(58, 58, 58)
-                                .addComponent(prntNum, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -254,6 +294,10 @@ public class Add_studentStd extends javax.swing.JFrame {
                                     .addComponent(prntFnm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(prntLnm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(prntAddrs, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(58, 58, 58)
+                                .addComponent(prntNum, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(51, 51, 51)
                                 .addComponent(backBtn)
@@ -344,8 +388,8 @@ public class Add_studentStd extends javax.swing.JFrame {
                 .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(courseCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -376,7 +420,60 @@ public class Add_studentStd extends javax.swing.JFrame {
 
     private void saveBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtn1ActionPerformed
         // TODO add your handling code here:
-        this.dispose();
+        try {
+        String fname = stdFnm.getText();
+        String lname = stdLnm.getText();
+        String address = stdAddrs.getText();
+        String nic = stdnic.getText();
+        String mNum = stdNum.getText();
+        
+        // Parse date with try-catch for ParseException
+        java.sql.Date sqlDate;
+        java.util.Date utilDate = null; // stop further processing
+        try {
+            utilDate = new SimpleDateFormat("yyyy-MM-dd").parse(stdDob.getText());
+        } catch (ParseException ex) {
+            Logger.getLogger(Add_studentStd.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        sqlDate = new java.sql.Date(utilDate.getTime());
+
+        String gender = genderCmb.getSelectedItem().toString();
+        String course = courseCmb.getSelectedItem().toString();
+        String pfname = prntFnm.getText();
+        String plname = prntLnm.getText();
+        String pAddress = prntAddrs.getText();
+        String pNum = prntNum.getText();
+
+        String sql = "INSERT INTO student_details (fname, lname, address, nic, mobile, dob, gender, course, parent_fname, parent_lname, parent_address, parent_mobile) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        pat = con.prepareStatement(sql);
+        pat.setString(1, fname);
+        pat.setString(2, lname);
+        pat.setString(3, address);
+        pat.setString(4, nic);
+        pat.setString(5, mNum);
+        pat.setDate(6, sqlDate);
+        pat.setString(7, gender);
+        pat.setString(8, course);
+        pat.setString(9, pfname);
+        pat.setString(10, plname);
+        pat.setString(11, pAddress);
+        pat.setString(12, pNum);
+
+        int rowsInserted = pat.executeUpdate();
+        if (rowsInserted > 0) {
+            JOptionPane.showMessageDialog(null, "Student record inserted successfully!");
+        }
+
+    } catch (SQLException ex) {
+        Logger.getLogger(Student_Details.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+        
+        
+        
+        
     }//GEN-LAST:event_saveBtn1ActionPerformed
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
@@ -432,8 +529,8 @@ public class Add_studentStd extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backBtn;
     private javax.swing.JButton clearbtn;
+    private javax.swing.JComboBox<String> courseCmb;
     private javax.swing.JComboBox<String> genderCmb;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

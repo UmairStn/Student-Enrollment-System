@@ -52,7 +52,7 @@ public class Add_studentStd extends javax.swing.JFrame {
     public void Connect() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            String url = "jdbc:mysql://localhost:3306/student_enrollment";
+            String url = "jdbc:mysql://localhost:3306/student_enrollment?useSSL=false";
             String username = "root";
             String password = "Umair.123";
             con = DriverManager.getConnection(url, username, password);
@@ -63,20 +63,7 @@ public class Add_studentStd extends javax.swing.JFrame {
     }
     
     
-    public void deleteStudentById(int id) {
-    String sql = "DELETE FROM student_details WHERE id = ?";
-    try (PreparedStatement pat = con.prepareStatement(sql)) {
-        pat.setInt(1, id);
-        int rowsDeleted = pat.executeUpdate();
-        if (rowsDeleted > 0) {
-            JOptionPane.showMessageDialog(null, "Student record deleted successfully!");
-        } else {
-            JOptionPane.showMessageDialog(null, "No record found with id: " + id);
-        }
-    } catch (SQLException ex) {
-        JOptionPane.showMessageDialog(null, "Error deleting student record: " + ex.getMessage());
-    }
-    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -426,6 +413,7 @@ public class Add_studentStd extends javax.swing.JFrame {
         String address = stdAddrs.getText();
         String nic = stdnic.getText();
         String mNum = stdNum.getText();
+        String email = stdMail.getText();
         
         // Parse date with try-catch for ParseException
         java.sql.Date sqlDate;
@@ -444,8 +432,8 @@ public class Add_studentStd extends javax.swing.JFrame {
         String pAddress = prntAddrs.getText();
         String pNum = prntNum.getText();
 
-        String sql = "INSERT INTO student_details (fname, lname, address, nic, mobile, dob, gender, course, parent_fname, parent_lname, parent_address, parent_mobile) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO student_details (fname, lname, address, nic, mobile, dob, gender, course, parent_fname, parent_lname, parent_address, parent_mobile, email) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         pat = con.prepareStatement(sql);
         pat.setString(1, fname);
@@ -460,6 +448,7 @@ public class Add_studentStd extends javax.swing.JFrame {
         pat.setString(10, plname);
         pat.setString(11, pAddress);
         pat.setString(12, pNum);
+        pat.setString(13, email);
 
         int rowsInserted = pat.executeUpdate();
         if (rowsInserted > 0) {
@@ -478,7 +467,7 @@ public class Add_studentStd extends javax.swing.JFrame {
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
         // TODO add your handling code here:
-        StudentManagement.Home();
+         StudentManagement.AdminLoginAccess();
         this.dispose();
     }//GEN-LAST:event_backBtnActionPerformed
 

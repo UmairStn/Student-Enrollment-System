@@ -52,7 +52,7 @@ public class Delete extends javax.swing.JFrame {
     public void Connect() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            String url = "jdbc:mysql://localhost:3306/student_enrollment";
+            String url = "jdbc:mysql://localhost:3306/student_enrollment?useSSL=false";
             String username = "root";
             String password = "Umair.123";
             con = DriverManager.getConnection(url, username, password);
@@ -132,6 +132,7 @@ public class Delete extends javax.swing.JFrame {
         stdFnmlbl1 = new javax.swing.JLabel();
         deleteBtn = new javax.swing.JButton();
         updateBtn = new javax.swing.JButton();
+        backBtn = new javax.swing.JButton();
 
         jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setFont(new java.awt.Font("HP Simplified", 1, 24)); // NOI18N
@@ -256,6 +257,15 @@ public class Delete extends javax.swing.JFrame {
             }
         });
 
+        backBtn.setBackground(new java.awt.Color(204, 204, 204));
+        backBtn.setFont(new java.awt.Font("HP Simplified Hans", 1, 14)); // NOI18N
+        backBtn.setText("Back");
+        backBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -265,7 +275,7 @@ public class Delete extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 299, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -321,13 +331,15 @@ public class Delete extends javax.swing.JFrame {
                                 .addGap(58, 58, 58)
                                 .addComponent(prntNum, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(49, 49, 49)
+                                .addGap(50, 50, 50)
+                                .addComponent(backBtn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(clearbtn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(deleteBtn)
-                                .addGap(18, 18, 18)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(updateBtn)))))
-                .addGap(80, 80, 80))
+                .addGap(97, 97, 97))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -368,6 +380,7 @@ public class Delete extends javax.swing.JFrame {
                         .addGap(158, 158, 158)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(clearbtn)
+                            .addComponent(backBtn)
                             .addComponent(deleteBtn)
                             .addComponent(updateBtn))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -456,11 +469,11 @@ public class Delete extends javax.swing.JFrame {
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
         // TODO add your handling code here:
         try {
-        int id = Integer.parseInt(idtxt.getText().trim());  // Get ID from text field
-        deleteStudentById(id);  // Call delete method
-    } catch (NumberFormatException ex) {
-        JOptionPane.showMessageDialog(null, "Please enter a valid numeric ID.");
-    }
+            int id = Integer.parseInt(idtxt.getText().trim());  // Get ID from text field
+            deleteStudentById(id);  // Call delete method
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "Please enter a valid numeric ID.");
+        }
     }//GEN-LAST:event_deleteBtnActionPerformed
 
     private void idtxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idtxtActionPerformed
@@ -469,8 +482,60 @@ public class Delete extends javax.swing.JFrame {
 
     private void updateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateBtnActionPerformed
         // TODO add your handling code here:
+        try {
+        int id = Integer.parseInt(idtxt.getText().trim());
+
+        String fname = stdFnm.getText().trim();
+        String lname = stdLnm.getText().trim();
+        String address = stdAddrs.getText().trim();
+        String nic = stdnic.getText().trim();
+        String email = stdMail.getText().trim();
+        String mobile = stdNum.getText().trim();
+        String dob = stdDob.getText().trim();
+        String gender = (String) genderCmb.getSelectedItem();
+        String course = (String) courseCmb.getSelectedItem();
+        String parent_fname = prntFnm.getText().trim();
+        String parent_lname = prntLnm.getText().trim();
+        String parent_address = prntAddrs.getText().trim();
+        String parent_mobile = prntNum.getText().trim();
+
+        String sql = "UPDATE student_details SET fname=?, lname=?, address=?, nic=?, email=?, mobile=?, dob=?, gender=?, course=?, parent_fname=?, parent_lname=?, parent_address=?, parent_mobile=? WHERE id=?";
+        pat = con.prepareStatement(sql);
+        pat.setString(1, fname);
+        pat.setString(2, lname);
+        pat.setString(3, address);
+        pat.setString(4, nic);
+        pat.setString(5, email);
+        pat.setString(6, mobile);
+        pat.setString(7, dob);
+        pat.setString(8, gender);
+        pat.setString(9, course);
+        pat.setString(10, parent_fname);
+        pat.setString(11, parent_lname);
+        pat.setString(12, parent_address);
+        pat.setString(13, parent_mobile);
+        pat.setInt(14, id);
+
+        int rowsUpdated = pat.executeUpdate();
+        if (rowsUpdated > 0) {
+            JOptionPane.showMessageDialog(null, "Student details updated successfully!");
+        } else {
+            JOptionPane.showMessageDialog(null, "No record found with ID: " + id);
+        }
+
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(null, "Please enter a valid numeric ID.");
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(null, "Error updating student details: " + ex.getMessage());
+    }
        
     }//GEN-LAST:event_updateBtnActionPerformed
+
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+        // TODO add your handling code here:
+        StudentManagement.AdminDashboard();
+        this.dispose();
+    }//GEN-LAST:event_backBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -508,6 +573,7 @@ public class Delete extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton backBtn;
     private javax.swing.JButton clearbtn;
     private javax.swing.JComboBox<String> courseCmb;
     private javax.swing.JButton deleteBtn;

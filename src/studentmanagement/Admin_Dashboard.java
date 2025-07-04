@@ -3,7 +3,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package studentmanagement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -16,7 +24,57 @@ public class Admin_Dashboard extends javax.swing.JFrame {
      */
     public Admin_Dashboard() {
         initComponents();
+        Connect();
+        loadStudentCounts();
     }
+    
+    
+    Connection con;
+    PreparedStatement pat;
+    DefaultTableModel df;
+    
+    public void Connect() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String url = "jdbc:mysql://localhost:3306/student_enrollment?useSSL=false";
+            String username = "root";
+            String password = "Umair.123";
+            con = DriverManager.getConnection(url, username, password);
+            System.out.println("Connected Successfully");
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Student_Details.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void loadStudentCounts() {
+        try {
+            // Call your Connect() method first if not connected
+            Connect();
+
+            String sql = "SELECT course, COUNT(*) AS student_count FROM student_details GROUP BY course";
+            pat = con.prepareStatement(sql);
+
+            ResultSet rs = pat.executeQuery();
+
+            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            model.setRowCount(0); // Clear previous data
+
+            while (rs.next()) {
+                String course = rs.getString("course");
+                int count = rs.getInt("student_count");
+                model.addRow(new Object[]{course, count});
+            }
+
+            rs.close();
+            pat.close();
+            con.close();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error loading student counts: " + e.getMessage());
+        }
+    }
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -32,6 +90,7 @@ public class Admin_Dashboard extends javax.swing.JFrame {
         viewStdBtn = new javax.swing.JButton();
         backBtn = new javax.swing.JButton();
         logoutBtn = new javax.swing.JButton();
+        viewStdBtn1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -73,18 +132,29 @@ public class Admin_Dashboard extends javax.swing.JFrame {
             }
         });
 
+        viewStdBtn1.setFont(new java.awt.Font("HP Simplified Hans", 1, 14)); // NOI18N
+        viewStdBtn1.setForeground(new java.awt.Color(51, 51, 51));
+        viewStdBtn1.setText("Edit Student Details");
+        viewStdBtn1.setActionCommand("");
+        viewStdBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewStdBtn1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(20, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(backBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(logoutBtn))
-                    .addComponent(viewStdBtn))
+                    .addComponent(viewStdBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(viewStdBtn1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18))
         );
         jPanel2Layout.setVerticalGroup(
@@ -92,6 +162,8 @@ public class Admin_Dashboard extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(244, 244, 244)
                 .addComponent(viewStdBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(viewStdBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(backBtn)
@@ -119,13 +191,13 @@ public class Admin_Dashboard extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
             },
             new String [] {
-                "Batch ID", "Course Name", "Student Count"
+                "Course Name", "Student Count"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -211,6 +283,12 @@ public class Admin_Dashboard extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_logoutBtnActionPerformed
 
+    private void viewStdBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewStdBtn1ActionPerformed
+        // TODO add your handling code here:
+        StudentManagement.DeleteDetails();
+        this.dispose();
+    }//GEN-LAST:event_viewStdBtn1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -257,5 +335,6 @@ public class Admin_Dashboard extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JButton logoutBtn;
     private javax.swing.JButton viewStdBtn;
+    private javax.swing.JButton viewStdBtn1;
     // End of variables declaration//GEN-END:variables
 }
